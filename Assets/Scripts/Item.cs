@@ -13,13 +13,14 @@ public class Item : MonoBehaviour
     private ItemConfig _itemConfig;
     private int _itemAmount;
 
-    public void ConfigureItem(ItemConfig config, int amount)
+    public void ConfigureItem(KeyValuePair<ItemConfig, int> item)
     {
-        _itemConfig = config;
-        _itemAmount = amount;
+        _itemConfig = item.Key;
+        _itemAmount = item.Value;
 
         itemImage.sprite = GetRandomClassSprite();
-        itemAmount.text = $"{amount}";
+        if(_itemConfig.ItemClass != CommonFields.ItemClass.Bomb)
+            itemAmount.text = $"{_itemAmount}";
     }
 
     public Sprite GetItemClassSprite()
@@ -34,7 +35,7 @@ public class Item : MonoBehaviour
 
     private Sprite GetRandomClassSprite()
     {
-        return _itemConfig.ClassSprites[Random.Range(0, _itemConfig.ClassSprites.Length)];
+        return _itemConfig.GetRandomItemSprite();
     }
     
     

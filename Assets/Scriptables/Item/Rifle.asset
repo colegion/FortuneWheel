@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a9459499d62e78429235aad0e2da39b, type: 3}
+  m_Name: Rifle
+  m_EditorClassIdentifier: 
+  ItemClass: 3
+  ClassSprites:
+  - {fileID: 21300000, guid: 8692e3ac96bbe0f4fb85f22f5d65c4b5, type: 3}
+  ClassPointSprite: {fileID: 21300000, guid: c0514396a2282c24e90e5d45bc5b2a25, type: 3}

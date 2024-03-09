@@ -13,9 +13,15 @@ namespace Utilities
 
         public enum ItemClass
         {
-            Weapon = 0,
+            Knife = 0,
+            Shotgun,
+            Smg,
+            Rifle,
+            Sniper,
             Wearable,
-            Special
+            Special,
+            Cash,
+            Bomb
         }
     }
 }

@@ -11,7 +11,7 @@ public class InputListener : MonoBehaviour
 
     private void OnValidate()
     {
-        _spinButton = GetComponentInChildren<Button>();
+        _spinButton = GetComponent<Button>();
 
         if (_spinButton != null)
         {

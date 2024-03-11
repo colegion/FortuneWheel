@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using static Utilities.CommonFields;
 namespace Utilities
 {
@@ -8,10 +9,18 @@ namespace Utilities
         public ItemClass ItemClass;
         public Sprite[] ClassSprites;
         public Sprite ClassPointSprite;
+        
+        public int CurrentSpriteIndex;
 
         public Sprite GetRandomItemSprite()
         {
-            return ClassSprites[Random.Range(0, ClassSprites.Length)];
+            CurrentSpriteIndex = Random.Range(0, ClassSprites.Length);
+            return ClassSprites[CurrentSpriteIndex];
+        }
+
+        public Sprite GetSelectedClassSprite()
+        {
+            return ClassSprites[CurrentSpriteIndex];
         }
     }
 }

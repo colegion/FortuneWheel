@@ -1,19 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DataContainers;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
 using static Utilities.CommonFields;
+using Random = UnityEngine.Random;
 
 public class LevelController : MonoBehaviour
 {
     [SerializeField] private SliceController sliceController;
     [SerializeField] private ItemContainer itemContainer;
     private int _levelIndex = 1;
-    private WheelType _currentLevelType = WheelType.Bronze;
+    private WheelType _currentLevelType = WheelType.Silver;
     private int _levelRewardFactor;
     private Dictionary<ItemConfig, int> _levelRewards = new Dictionary<ItemConfig, int>();
+
+    public static event Action<WheelType> OnLevelReady;
+    public static event Action<int, Action> OnSpinNeeded;
+    public static event Action<KeyValuePair<ItemConfig, int>> OnRewardDisplayNeeded;
 
     [ContextMenu("Test population")]
     public void InitializeLevel()
@@ -23,6 +30,13 @@ public class LevelController : MonoBehaviour
         PopulateLevelItems();
         
         sliceController.InitializeLevelRewards(_levelRewards);
+        
+        OnLevelReady?.Invoke(_currentLevelType);
+    }
+
+    private void Start()
+    {
+        InitializeLevel();
     }
 
     private void PopulateLevelItems()
@@ -39,6 +53,17 @@ public class LevelController : MonoBehaviour
         }
         
         _levelRewards.Shuffle();
+    }
+
+    public void DecideWheelOutcome()
+    {
+        var randomOutcome = Random.Range(0, _levelRewards.Count);
+        var outcomeItem = _levelRewards.ElementAt(randomOutcome);
+        var targetAngle = randomOutcome * SLICE_ANGLE;
+        OnSpinNeeded?.Invoke(targetAngle, () =>
+        {
+            OnRewardDisplayNeeded?.Invoke(outcomeItem);
+        });
     }
 
     private int GetRandomRewardAmount()

@@ -11,11 +11,9 @@ namespace DataContainers
    {
       public Dictionary<WheelType, WheelConfig> ConfigContainer;
    
-      public WheelConfig DecideLevelWheelType(int levelIndex)
+      public WheelConfig DecideLevelWheelType(WheelType type)
       {
-         if (levelIndex % GOLDEN_WHEEL_COEFFICIENT == 0) return ConfigContainer[WheelType.Gold];
-         if (levelIndex % SILVER_WHEEL_COEFFICIENT == 0) return ConfigContainer[WheelType.Silver];
-         return ConfigContainer[WheelType.Bronze];
+         return ConfigContainer[type];
       }
    }
 }

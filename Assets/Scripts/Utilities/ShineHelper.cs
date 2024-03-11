@@ -8,7 +8,7 @@ namespace Utilities
     {
         private void OnEnable()
         {
-            transform.DORotate(new Vector3(0, 0, 360f), 14f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Incremental);
+            transform.DORotate(new Vector3(0, 0, 360f), 14f, RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1, LoopType.Restart);
         }
 
         private void OnDisable()

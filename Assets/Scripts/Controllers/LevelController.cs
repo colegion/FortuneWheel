@@ -19,8 +19,8 @@ public class LevelController : MonoBehaviour
     private Dictionary<ItemConfig, int> _levelRewards = new Dictionary<ItemConfig, int>();
 
     public static event Action<WheelType> OnLevelReady;
-    public static event Action<int, Action> OnSpinNeeded;
-    public static event Action<KeyValuePair<ItemConfig, int>> OnRewardDisplayNeeded;
+    public static event Action<int, KeyValuePair<ItemConfig, int>> OnSpinNeeded;
+    
 
     [ContextMenu("Test population")]
     public void InitializeLevel()
@@ -60,15 +60,12 @@ public class LevelController : MonoBehaviour
         var randomOutcome = Random.Range(0, _levelRewards.Count);
         var outcomeItem = _levelRewards.ElementAt(randomOutcome);
         var targetAngle = randomOutcome * SLICE_ANGLE;
-        OnSpinNeeded?.Invoke(targetAngle, () =>
-        {
-            OnRewardDisplayNeeded?.Invoke(outcomeItem);
-        });
+        OnSpinNeeded?.Invoke(targetAngle, outcomeItem);
     }
 
     private int GetRandomRewardAmount()
     {
-        return Random.Range(1, 10) * _levelRewardFactor;
+        return Random.Range(1, 5) * _levelRewardFactor;
     }
 
     private void SetLevelType()

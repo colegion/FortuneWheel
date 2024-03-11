@@ -1,80 +1,82 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Controllers;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 using static Utilities.CommonFields;
-public class ItemCardUIHelper : MonoBehaviour
+namespace Helpers
 {
-    [SerializeField] private Image rewardPanel;
-    [SerializeField] private Image backSideImage;
-    [SerializeField] private Image cardPanelImage;
-
-    [SerializeField] private Image cardImage;
-
-    [SerializeField] private Image classPointsImage;
-
-    [SerializeField] private TextMeshProUGUI pointAmountField;
-
-    private void OnEnable()
+    public class ItemCardUIHelper : MonoBehaviour
     {
-        AddListeners();
-    }
+        [SerializeField] private Image rewardPanel;
+        [SerializeField] private Image backSideImage;
+        [SerializeField] private Image cardPanelImage;
+        [SerializeField] private Image cardImage;
+        [SerializeField] private Image classPointsImage;
+        [SerializeField] private TextMeshProUGUI pointAmountField;
 
-    private void OnDisable()
-    {
-        RemoveListeners();
-    }
+        [SerializeField] private ItemAnimationHelper ItemAnimationHelper;
 
-
-    private void ConfigureItemCard(KeyValuePair<ItemConfig, int> outcome)
-    {
-        if (IsBomb(outcome.Key.ItemClass))
+        private KeyValuePair<ItemConfig, int> _currentItem;
+        private void OnEnable()
         {
-            DisableFieldsForBomb();
-            cardPanelImage.color = Color.red;
+            AddListeners();
         }
-        else
+
+        private void OnDisable()
         {
-            cardImage.sprite = outcome.Key.GetSelectedClassSprite();
-            pointAmountField.text = $"x{outcome.Value}";
+            RemoveListeners();
         }
+
+
+        private void ConfigureItemCard(KeyValuePair<ItemConfig, int> outcome)
+        {
+            _currentItem = outcome;
+            if (IsBomb(outcome.Key.ItemClass))
+            {
+                DisableFieldsForBomb();
+                cardPanelImage.color = Color.red;
+            }
+            else
+            {
+                cardImage.sprite = outcome.Key.GetSelectedClassSprite();
+                pointAmountField.text = $"x{outcome.Value}";
+            }
         
-        classPointsImage.sprite = outcome.Key.ClassPointSprite;
-        rewardPanel.gameObject.SetActive(true);
-        FakeCardTurn();
-    }
+            classPointsImage.sprite = outcome.Key.ClassPointSprite;
+            rewardPanel.gameObject.SetActive(true);
+            FakeCardTurn();
+        }
     
-    [ContextMenu("Test fake turn")]
-    public void FakeCardTurn()
-    {
-        backSideImage.transform.DORotate(new Vector3(0, 135, 0), 0.7f).SetEase(Ease.InBack).OnComplete(() =>
+        [ContextMenu("Test fake turn")]
+        public void FakeCardTurn()
         {
-            backSideImage.gameObject.SetActive(false);
-            cardPanelImage.gameObject.SetActive(true);
-        });
-    }
+            backSideImage.transform.DORotate(new Vector3(0, 135, 0), 0.7f).SetEase(Ease.InBack).OnComplete(() =>
+            {
+                backSideImage.gameObject.SetActive(false);
+                cardPanelImage.gameObject.SetActive(true);
+                ItemAnimationHelper.InstantiateItemObjects(Random.Range(1, 5), _currentItem.Key.ClassPointSprite);
+            });
+        }
 
-    private void DisableFieldsForBomb()
-    {
-        classPointsImage.gameObject.SetActive(false);
-        pointAmountField.gameObject.SetActive(false);
-    }
+        private void DisableFieldsForBomb()
+        {
+            classPointsImage.gameObject.SetActive(false);
+            pointAmountField.gameObject.SetActive(false);
+        }
 
-    private void AddListeners()
-    {
-        WheelUIController.OnRewardDisplayNeeded += ConfigureItemCard;
-    }
+        private void AddListeners()
+        {
+            WheelUIController.OnRewardDisplayNeeded += ConfigureItemCard;
+        }
 
-    private void RemoveListeners()
-    {
-        WheelUIController.OnRewardDisplayNeeded -= ConfigureItemCard;
-    }
+        private void RemoveListeners()
+        {
+            WheelUIController.OnRewardDisplayNeeded -= ConfigureItemCard;
+        }
 
-    private bool IsBomb(ItemClass itemClass) => itemClass == ItemClass.Bomb;
+        private bool IsBomb(ItemClass itemClass) => itemClass == ItemClass.Bomb;
+    }
 }

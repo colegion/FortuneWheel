@@ -16,4 +16,5 @@ MonoBehaviour:
   ClassSprites:
   - {fileID: 21300000, guid: 3029ef173571996429f505eca3d563fa, type: 3}
   - {fileID: 21300000, guid: c97b9df5cb3ae57458f8a97f1599acae, type: 3}
-  ClassPointSprite: {fileID: 0}
+  ClassPointSprite: {fileID: 21300000, guid: 368c6bcfef1583440a17f939d439de48, type: 3}
+  CurrentSpriteIndex: 0

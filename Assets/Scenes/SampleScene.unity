@@ -1079,11 +1079,11 @@ MonoBehaviour:
   m_Padding:
     m_Left: 20
     m_Right: 0
-    m_Top: 50
+    m_Top: 20
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: -300
-  m_ChildForceExpandWidth: 1
+  m_Spacing: -200
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
@@ -1281,10 +1281,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RewardPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 2728418186114829766, guid: 15df59f38ca175642b68e1789f05448a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6545887807704875403, guid: 15df59f38ca175642b68e1789f05448a, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1363,10 +1359,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6545887807704875403, guid: 15df59f38ca175642b68e1789f05448a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8349623621318809243, guid: 15df59f38ca175642b68e1789f05448a, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -22,8 +22,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 47b911f1776e79c4b928d54d72bce599, type: 2}
     - {fileID: 11400000, guid: 9c485462d9b4a6247ac4f23da337d112, type: 2}
     - {fileID: 11400000, guid: 60d9dc34bf409a247aee3c12cc670bb6, type: 2}
-    - {fileID: 11400000, guid: e812012ee0c258d47a63104b4f8f21c7, type: 2}
     - {fileID: 11400000, guid: 057ce369a67225240a77a9634446de50, type: 2}
+    - {fileID: 11400000, guid: e812012ee0c258d47a63104b4f8f21c7, type: 2}
     - {fileID: 11400000, guid: ca936830ace84e04680b7f4e16ce5608, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}

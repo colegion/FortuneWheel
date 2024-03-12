@@ -42,8 +42,8 @@ namespace Controllers
             SetLevelType();
             PopulateLevelItems();
         
-            sliceController.InitializeLevelRewards(_levelRewards);
             OnLevelReady?.Invoke(_currentLevelType);
+            sliceController.InitializeLevelRewards(_levelRewards);
             _levelIndex++;
         }
 
@@ -59,11 +59,11 @@ namespace Controllers
                 count = WHEEL_SLICE_COUNT - 1;
             }
         
-            /*else if (_currentLevelType == WheelType.Gold)
+            else if (_currentLevelType == WheelType.Gold)
             {
                 _levelRewards.Add(itemContainer.GetSpecialItem(), 1);
                 count = WHEEL_SLICE_COUNT - 1;
-            }*/
+            }
         
             GetRandomItems(count);
             _levelRewards.Shuffle();

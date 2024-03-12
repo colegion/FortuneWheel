@@ -1,11 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DataContainers;
 using DG.Tweening;
 using Helpers;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 using Utilities;
+using Image = UnityEngine.UI.Image;
 
 namespace Controllers
 {
@@ -39,6 +41,12 @@ namespace Controllers
             var wheel = configContainer.DecideLevelWheelType(wheelType);
             wheelBase.sprite = wheel.WheelBase;
             wheelIndicator.sprite = wheel.WheelIndicator;
+            ResetWheelRotation();
+        }
+
+        private void ResetWheelRotation()
+        {
+            wheelBase.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 
         private void AnimationWheel(int finalDestinationAngle, KeyValuePair<ItemConfig, int> outcome)
@@ -47,20 +55,43 @@ namespace Controllers
             _outcomeItem = outcome;
             _finalAngle = finalDestinationAngle;
         }
-    
-        [ContextMenu("Test wheel spin")]
-        public void TestSpin()
+        
+        private void TestSpin()
         {
             animationHelper.PlaySpinAnimation();
         }
 
         private void RotateTowardsTarget()
         {
-            wheelBase.transform.DOLocalRotate(new Vector3(0, 0, _finalAngle), finalDuration).SetEase(ease).OnComplete(() =>
+            if (_finalAngle > 180)
             {
-                OnRewardDisplayNeeded?.Invoke(_outcomeItem);
-            });
+                RotateWheel(180, () =>
+                {
+                    _finalAngle -= 180;
+                    RotateWheel(_finalAngle, () =>
+                    {
+                        OnRewardDisplayNeeded?.Invoke(_outcomeItem);
+                    });
+                });
+            }
+            else
+            {
+                RotateWheel(_finalAngle, () => 
+                {
+                    OnRewardDisplayNeeded?.Invoke(_outcomeItem); 
+                });
+            }
         }
+
+        private void RotateWheel(float rotationAmount, Action onComplete)
+        {
+            wheelBase.transform.DOLocalRotate(new Vector3(0, 0, rotationAmount), finalDuration, RotateMode.LocalAxisAdd).SetEase(ease).OnComplete(
+                () =>
+                {
+                    onComplete?.Invoke();
+                });
+        }
+
 
         private void AddListeners()
         {

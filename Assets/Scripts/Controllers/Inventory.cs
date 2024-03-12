@@ -65,7 +65,6 @@ namespace Controllers
         {
             ItemCardUIHelper.OnInventoryUpdateNeeded += TrySpawnInventorySlot;
             LevelController.OnLevelReady += EnableExitButton;
-
         }
 
         private void RemoveListeners()
@@ -74,8 +73,5 @@ namespace Controllers
             LevelController.OnLevelReady -= EnableExitButton;
         }
         private bool AlreadySpawned(ItemClass itemClass) => _spawnedInventoryItems.ContainsKey(itemClass);
-        
-
-
     }
 }

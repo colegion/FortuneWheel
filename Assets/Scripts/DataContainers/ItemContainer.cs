@@ -15,10 +15,10 @@ namespace DataContainers
 
         public ItemConfig GetRandomItem()
         {
-            var randomClass = (ItemClass)Random.Range(0, (int)ItemClass.Bomb);
+            var randomClass = (ItemClass)Random.Range(0, (int)ItemClass.Bomb - 1);
             while (_usedClasses.Contains(randomClass))
             {
-                randomClass = (ItemClass)Random.Range(0, (int)ItemClass.Bomb);
+                randomClass = (ItemClass)Random.Range(0, (int)ItemClass.Bomb - 1);
             }
             _usedClasses.Add(randomClass);
             return RewardItems[randomClass];
@@ -27,6 +27,11 @@ namespace DataContainers
         public ItemConfig GetBombItem()
         {
             return RewardItems[ItemClass.Bomb];
+        }
+
+        public ItemConfig GetSpecialItem()
+        {
+            return RewardItems[ItemClass.Special];
         }
 
         public void ClearUsedClasses()

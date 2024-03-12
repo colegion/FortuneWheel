@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using DataContainers;
+using Helpers;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
@@ -13,46 +15,69 @@ public class LevelController : MonoBehaviour
 {
     [SerializeField] private SliceController sliceController;
     [SerializeField] private ItemContainer itemContainer;
-    private int _levelIndex = 1;
+    private int _levelIndex = 0;
     private WheelType _currentLevelType = WheelType.Silver;
     private int _levelRewardFactor;
     private Dictionary<ItemConfig, int> _levelRewards = new Dictionary<ItemConfig, int>();
 
     public static event Action<WheelType> OnLevelReady;
-    public static event Action<int, KeyValuePair<ItemConfig, int>> OnSpinNeeded;
-    
+    public static event Action<int, KeyValuePair<ItemConfig, int>> OnAnimationNeeded;
 
-    [ContextMenu("Test population")]
-    public void InitializeLevel()
+    private void OnEnable()
     {
-        _levelIndex++;
-        SetLevelType();
-        PopulateLevelItems();
-        
-        sliceController.InitializeLevelRewards(_levelRewards);
-        
-        OnLevelReady?.Invoke(_currentLevelType);
+        AddListeners();
     }
 
+    private void OnDisable()
+    {
+        RemoveListeners();
+    }
+    
     private void Start()
     {
         InitializeLevel();
     }
+    
+    private void InitializeLevel()
+    {
+        SetLevelType();
+        PopulateLevelItems();
+        
+        sliceController.InitializeLevelRewards(_levelRewards);
+        OnLevelReady?.Invoke(_currentLevelType);
+        _levelIndex++;
+    }
 
     private void PopulateLevelItems()
     {
+        int count = 8;
         _levelRewards.Clear();
         itemContainer.ClearUsedClasses();
+
+        if (_currentLevelType == WheelType.Bronze)
+        {
+            _levelRewards.Add(itemContainer.GetBombItem(), 1);
+            count = WHEEL_SLICE_COUNT - 1;
+        }
         
-        _levelRewards.Add(itemContainer.GetBombItem(), 1);
-        for (int i = 0; i < WHEEL_SLICE_COUNT - 1; i++)
+        else if (_currentLevelType == WheelType.Gold)
+        {
+            _levelRewards.Add(itemContainer.GetSpecialItem(), 1);
+            count = WHEEL_SLICE_COUNT - 1;
+        }
+        
+        GetRandomItems(count);
+        _levelRewards.Shuffle();
+    }
+
+    private void GetRandomItems(int itemCount)
+    {
+        for (int i = 0; i < itemCount; i++)
         {
             var item = itemContainer.GetRandomItem();
             var amount = GetRandomRewardAmount();
             _levelRewards.Add(item, amount);
         }
-        
-        _levelRewards.Shuffle();
     }
 
     public void DecideWheelOutcome()
@@ -60,7 +85,7 @@ public class LevelController : MonoBehaviour
         var randomOutcome = Random.Range(0, _levelRewards.Count);
         var outcomeItem = _levelRewards.ElementAt(randomOutcome);
         var targetAngle = randomOutcome * SLICE_ANGLE;
-        OnSpinNeeded?.Invoke(targetAngle, outcomeItem);
+        OnAnimationNeeded?.Invoke(targetAngle, outcomeItem);
     }
 
     private int GetRandomRewardAmount()
@@ -70,6 +95,12 @@ public class LevelController : MonoBehaviour
 
     private void SetLevelType()
     {
+        if (_levelIndex == 0)
+        {
+            _currentLevelType = WheelType.Silver;
+            _levelRewardFactor = RewardAmountFactors[WheelType.Silver];
+            return;
+        }
         if (_levelIndex % GOLDEN_WHEEL_COEFFICIENT == 0)
         {
             _currentLevelType = WheelType.Gold;
@@ -84,5 +115,15 @@ public class LevelController : MonoBehaviour
         }
         _currentLevelType = WheelType.Bronze;
         _levelRewardFactor = RewardAmountFactors[WheelType.Bronze];
+    }
+
+    private void AddListeners()
+    {
+        ItemCardUIHelper.OnNextLevelNeeded += InitializeLevel;
+    }
+
+    private void RemoveListeners()
+    {
+        ItemCardUIHelper.OnNextLevelNeeded -= InitializeLevel;
     }
 }

@@ -1,6 +1,10 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Helpers
 {
@@ -9,9 +13,17 @@ namespace Helpers
         [SerializeField] private GameObject itemObject;
 
         private List<GameObject> _spawnedObjects;
-        
-        
-        [ContextMenu("Test spawning")]
+
+        private void OnEnable()
+        {
+            AddListeners();
+        }
+
+        private void OnDisable()
+        {
+            RemoveListeners();
+        }
+
         public void InstantiateItemObjects(int amount, Sprite itemSprite)
         {
             _spawnedObjects = new List<GameObject>();
@@ -31,10 +43,41 @@ namespace Helpers
 
         private Vector2 GetRandomTransform()
         {
-            var xOffset = Random.Range(0, 15);
-            var yOffset = Random.Range(0, 15);
+            var xOffset = Random.Range(0, 150);
+            var yOffset = Random.Range(0, 150);
             var position = transform.position;
             return new Vector2(position.x + xOffset, position.y + yOffset);
+        }
+
+        private void MakeParticlesMove(RectTransform target)
+        {
+            DOVirtual.DelayedCall(.1f, ()=>
+            {
+                StartCoroutine(MoveParticles(target));
+            });
+        }
+
+        private IEnumerator MoveParticles(RectTransform target)
+        {
+            foreach (var itemObj in _spawnedObjects)
+            {
+                itemObj.transform.DOMove(target.position, 1.2f).SetEase(Ease.OutCubic).OnComplete(() =>
+                {
+                    Destroy(itemObj.gameObject);
+                });
+
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+        private void AddListeners()
+        {
+            InventoryItemUIHelper.OnItemParticleMovementNeeded += MakeParticlesMove;
+        }
+
+        private void RemoveListeners()
+        {
+            InventoryItemUIHelper.OnItemParticleMovementNeeded -= MakeParticlesMove;
         }
     }
 }

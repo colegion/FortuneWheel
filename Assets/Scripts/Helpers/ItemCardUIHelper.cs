@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Controllers;
 using DG.Tweening;
@@ -6,6 +7,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
 using static Utilities.CommonFields;
+using Random = UnityEngine.Random;
+
 namespace Helpers
 {
     public class ItemCardUIHelper : MonoBehaviour
@@ -20,6 +23,9 @@ namespace Helpers
         [SerializeField] private ItemAnimationHelper ItemAnimationHelper;
 
         private KeyValuePair<ItemConfig, int> _currentItem;
+
+        public static event Action<KeyValuePair<ItemConfig, int>> OnInventoryUpdateNeeded;
+        public static event Action OnNextLevelNeeded;
         private void OnEnable()
         {
             AddListeners();
@@ -41,10 +47,10 @@ namespace Helpers
             }
             else
             {
-                cardImage.sprite = outcome.Key.GetSelectedClassSprite();
                 pointAmountField.text = $"x{outcome.Value}";
             }
-        
+            
+            cardImage.sprite = outcome.Key.GetSelectedClassSprite();
             classPointsImage.sprite = outcome.Key.ClassPointSprite;
             rewardPanel.gameObject.SetActive(true);
             FakeCardTurn();
@@ -57,7 +63,14 @@ namespace Helpers
             {
                 backSideImage.gameObject.SetActive(false);
                 cardPanelImage.gameObject.SetActive(true);
-                ItemAnimationHelper.InstantiateItemObjects(Random.Range(1, 5), _currentItem.Key.ClassPointSprite);
+                ItemAnimationHelper.InstantiateItemObjects(_currentItem.Value / 5, _currentItem.Key.ClassPointSprite);
+                OnInventoryUpdateNeeded?.Invoke(_currentItem);
+            });
+
+            DOVirtual.DelayedCall(2.3f, () =>
+            {
+                ResetItemCard();
+                OnNextLevelNeeded?.Invoke();
             });
         }
 
@@ -65,6 +78,18 @@ namespace Helpers
         {
             classPointsImage.gameObject.SetActive(false);
             pointAmountField.gameObject.SetActive(false);
+        }
+
+        private void ResetItemCard()
+        {
+            classPointsImage.gameObject.SetActive(true);
+            pointAmountField.gameObject.SetActive(true);
+            backSideImage.gameObject.SetActive(true);
+            cardPanelImage.gameObject.SetActive(false);
+            cardImage.sprite = null;
+            pointAmountField.text = "";
+            backSideImage.transform.rotation =  Quaternion.Euler(0, 0, 0);
+            rewardPanel.gameObject.SetActive(false);
         }
 
         private void AddListeners()

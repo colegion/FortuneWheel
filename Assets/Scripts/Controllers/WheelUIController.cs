@@ -41,7 +41,7 @@ namespace Controllers
             wheelIndicator.sprite = wheel.WheelIndicator;
         }
 
-        private void SpinWheel(int finalDestinationAngle, KeyValuePair<ItemConfig, int> outcome)
+        private void AnimationWheel(int finalDestinationAngle, KeyValuePair<ItemConfig, int> outcome)
         {
             TestSpin();
             _outcomeItem = outcome;
@@ -65,14 +65,14 @@ namespace Controllers
         private void AddListeners()
         {
             LevelController.OnLevelReady += ConfigureWheelSprites;
-            LevelController.OnSpinNeeded += SpinWheel;
+            LevelController.OnAnimationNeeded += AnimationWheel;
             WheelAnimationHelper.OnAnimationCompleted += RotateTowardsTarget;
         }
 
         private void RemoveListeners()
         {
             LevelController.OnLevelReady -= ConfigureWheelSprites;
-            LevelController.OnSpinNeeded -= SpinWheel;
+            LevelController.OnAnimationNeeded -= AnimationWheel;
             WheelAnimationHelper.OnAnimationCompleted -= RotateTowardsTarget;
         }
     }

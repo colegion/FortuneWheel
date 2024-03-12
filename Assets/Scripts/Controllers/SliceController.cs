@@ -3,18 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
 
-public class SliceController : MonoBehaviour
+namespace Controllers
 {
-    [SerializeField] private Item[] levelRewards;
-
-    public void InitializeLevelRewards(Dictionary<ItemConfig, int> items)
+    public class SliceController : MonoBehaviour
     {
-        var count = 0;
-        foreach (KeyValuePair<ItemConfig, int> item in items)
+        [SerializeField] private Item[] levelRewards;
+
+        public void InitializeLevelRewards(Dictionary<ItemConfig, int> items)
         {
-            levelRewards[count].ConfigureItem(item);
-            count++;
+            StartCoroutine(ConfigureItems(items));
         }
-    }
+
+        private IEnumerator ConfigureItems(Dictionary<ItemConfig, int> levelItems)
+        {
+            var count = 0;
+            foreach (KeyValuePair<ItemConfig, int> item in levelItems)
+            {
+                levelRewards[count].ConfigureItem(item);
+                count++;
+            
+                yield return new WaitForSeconds(.2f);
+            }
+        }
     
+    }
 }

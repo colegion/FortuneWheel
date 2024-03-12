@@ -40,7 +40,7 @@ namespace Helpers
         }
 
 
-        private void ConfigureItemCard(KeyValuePair<ItemConfig, int> outcome)
+        public void ConfigureItemCard(KeyValuePair<ItemConfig, int> outcome)
         {
             _currentItem = outcome;
             if (IsItemClassesSame(outcome.Key.ItemClass, ItemClass.Bomb))

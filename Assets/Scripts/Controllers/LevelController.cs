@@ -84,6 +84,7 @@ namespace Controllers
             var randomOutcome = Random.Range(0, _levelRewards.Count);
             var outcomeItem = _levelRewards.ElementAt(randomOutcome);
             var targetAngle = randomOutcome * SLICE_ANGLE;
+            Inventory.PopulateInventory(outcomeItem);
             OnAnimationNeeded?.Invoke(targetAngle, outcomeItem);
         }
 

@@ -17,10 +17,18 @@ namespace Controllers
         [SerializeField] private InventoryItemUIHelper inventoryItem;
 
         private Dictionary<ItemClass, InventoryItemUIHelper> _spawnedInventoryItems = new Dictionary<ItemClass, InventoryItemUIHelper>();
+        public static Dictionary<ItemConfig, int> PlayerInventory = new Dictionary<ItemConfig, int>();
+
+        public static event Action<Dictionary<ItemConfig, int>> OnRewardsCollected;
 
         private void OnEnable()
         {
             AddListeners();
+        }
+
+        private void OnValidate()
+        {
+            exitButton.onClick.AddListener(RaiseCollectEvent);
         }
 
         private void OnDisable()
@@ -44,6 +52,18 @@ namespace Controllers
             }
         }
 
+        public static void PopulateInventory(KeyValuePair<ItemConfig, int> rewardItem)
+        {
+            if (PlayerInventory.ContainsKey(rewardItem.Key))
+            {
+                PlayerInventory[rewardItem.Key] += rewardItem.Value;
+            }
+            else
+            {
+                PlayerInventory.Add(rewardItem.Key, rewardItem.Value);
+            }
+        }
+
         private InventoryItemUIHelper GetSpawnedItemIndex(ItemClass itemClass)
         {
             return _spawnedInventoryItems[itemClass];
@@ -61,6 +81,11 @@ namespace Controllers
             exitButton.interactable = true;
         }
 
+        private void RaiseCollectEvent()
+        {
+            OnRewardsCollected?.Invoke(PlayerInventory);
+        }
+
         private void AddListeners()
         {
             ItemCardUIHelper.OnInventoryUpdateNeeded += TrySpawnInventorySlot;
@@ -71,6 +96,7 @@ namespace Controllers
         {
             ItemCardUIHelper.OnInventoryUpdateNeeded -= TrySpawnInventorySlot;
             LevelController.OnLevelReady -= EnableExitButton;
+            exitButton.onClick.RemoveListener(RaiseCollectEvent);
         }
         private bool AlreadySpawned(ItemClass itemClass) => _spawnedInventoryItems.ContainsKey(itemClass);
     }

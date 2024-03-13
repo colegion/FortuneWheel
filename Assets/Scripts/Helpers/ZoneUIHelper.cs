@@ -12,6 +12,7 @@ namespace Helpers
 {
     public class ZoneUIHelper : MonoBehaviour
     {
+        [SerializeField] private ScrollRect zoneRect;
         [SerializeField] private HorizontalLayoutGroup zoneLayoutGroup;
         [SerializeField] private Image zoneFrame;
         [SerializeField] private GameObject zoneItem;
@@ -44,7 +45,11 @@ namespace Helpers
 
         private void SpawnNewZone(CommonFields.WheelType type)
         {
-            if (_currentZoneIndex == 0) return;
+            if (_currentZoneIndex == 0)
+            {
+                _currentZoneIndex++;
+                return;
+            }
             var zone = Instantiate(zoneItem, zoneLayoutGroup.transform);
             var zoneField = zone.GetComponentInChildren<TextMeshProUGUI>();
             zoneField.text = $"{_spawnedZones.Count}";
@@ -56,10 +61,7 @@ namespace Helpers
 
         private void PositionZoneFrame()
         {
-            zoneLayoutGroup.GetComponent<RectTransform>().localPosition =
-                new Vector2(zoneLayoutGroup.GetComponent<RectTransform>().localPosition.x - 100, 0);
-            //zoneLayoutGroup.transform.DOMoveX(zoneLayoutGroup.transform.position.x - 100, .5f)
-              //  .SetEase(Ease.Linear);
+            zoneLayoutGroup.transform.DOMoveX(zoneLayoutGroup.transform.position.x - 100, .5f);
         }
 
         private Color DecideZoneColor(int zoneIndex)

@@ -19,6 +19,7 @@ namespace Helpers
         [SerializeField] private Image cardImage;
         [SerializeField] private Image classPointsImage;
         [SerializeField] private TextMeshProUGUI pointAmountField;
+        [SerializeField] private Button restartButton;
 
         [SerializeField] private TextMeshProUGUI gameOverText;
 
@@ -29,6 +30,7 @@ namespace Helpers
 
         public static event Action<KeyValuePair<ItemConfig, int>> OnInventoryUpdateNeeded;
         public static event Action OnNextLevelNeeded;
+        public static event Action OnRestartButtonNeeded;
         private void OnEnable()
         {
             AddListeners();
@@ -40,7 +42,7 @@ namespace Helpers
         }
 
 
-        public void ConfigureItemCard(KeyValuePair<ItemConfig, int> outcome)
+        private void ConfigureItemCard(KeyValuePair<ItemConfig, int> outcome)
         {
             _currentItem = outcome;
             if (IsItemClassesSame(outcome.Key.ItemClass, ItemClass.Bomb))
@@ -62,15 +64,18 @@ namespace Helpers
             rewardPanel.gameObject.SetActive(true);
             FakeCardTurn();
         }
-    
-        [ContextMenu("Test fake turn")]
-        public void FakeCardTurn()
+        
+        private void FakeCardTurn()
         {
             backSideImage.transform.DORotate(new Vector3(0, 135, 0), 0.7f).SetEase(Ease.InBack).OnComplete(() =>
             {
                 backSideImage.gameObject.SetActive(false);
                 cardPanelImage.gameObject.SetActive(true);
-                if (_isGameOver) return;
+                if (_isGameOver)
+                {
+                    OnRestartButtonNeeded?.Invoke();
+                    return;
+                }
                 ItemAnimationHelper.InstantiateItemObjects(_currentItem.Value / 5, _currentItem.Key.ClassPointSprite);
                 OnInventoryUpdateNeeded?.Invoke(_currentItem);
                 DOVirtual.DelayedCall(1.6f, () =>

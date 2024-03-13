@@ -51,6 +51,7 @@ namespace Helpers
 
         private void MakeParticlesMove(RectTransform target)
         {
+            if (_spawnedObjects.Count == 0) return;
             DOVirtual.DelayedCall(.1f, ()=>
             {
                 StartCoroutine(MoveParticles(target));

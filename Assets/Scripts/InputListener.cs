@@ -2,39 +2,44 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Controllers;
+using Helpers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
 public class InputListener : MonoBehaviour
 {
     [SerializeField] private LevelController levelController;
-    private Button _spinButton;
+    [SerializeField]private Button spinButton;
+    [SerializeField]private Button restartButton;
 
     private void OnValidate()
     {
-        _spinButton = GetComponent<Button>();
-
-        if (_spinButton != null)
+        if (spinButton != null)
         {
-            _spinButton.onClick.AddListener(OnSpinButtonClicked);
+            spinButton.onClick.AddListener(OnSpinButtonClicked);
         }
+        
+        restartButton.onClick.AddListener(RestartGame);
     }
 
     private void OnEnable()
     {
         AddListeners();
     }
-
-    private void AddListeners()
+    
+    
+    private void RestartGame()
     {
-        LevelController.OnLevelReady += EnableSpinButton;
+        restartButton.gameObject.SetActive(false);
+        SceneManager.LoadScene("SampleScene");
     }
 
-    private void RemoveListeners()
+    private void EnableRestartButton()
     {
-        LevelController.OnLevelReady -= EnableSpinButton;
-        _spinButton.onClick.RemoveListener(OnSpinButtonClicked);
+        restartButton.gameObject.SetActive(true);
     }
 
     private void OnDisable()
@@ -44,14 +49,27 @@ public class InputListener : MonoBehaviour
 
     private void EnableSpinButton(CommonFields.WheelType dummy)
     {
-        _spinButton.transition = Selectable.Transition.ColorTint;
-        _spinButton.interactable = true;
+        spinButton.transition = Selectable.Transition.ColorTint;
+        spinButton.interactable = true;
     }
 
     private void OnSpinButtonClicked()
     {
-        _spinButton.transition = Selectable.Transition.None;
-        _spinButton.interactable = false;
+        spinButton.transition = Selectable.Transition.None;
+        spinButton.interactable = false;
         levelController.DecideWheelOutcome();
+    }
+    
+    private void AddListeners()
+    {
+        LevelController.OnLevelReady += EnableSpinButton;
+        ItemCardUIHelper.OnRestartButtonNeeded += EnableRestartButton;
+    }
+
+    private void RemoveListeners()
+    {
+        LevelController.OnLevelReady -= EnableSpinButton;
+        ItemCardUIHelper.OnRestartButtonNeeded -= EnableRestartButton;
+        spinButton.onClick.RemoveListener(OnSpinButtonClicked);
     }
 }

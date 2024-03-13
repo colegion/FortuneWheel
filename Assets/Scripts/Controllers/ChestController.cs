@@ -10,10 +10,11 @@ namespace Controllers
 {
     public class ChestController : MonoBehaviour
     {
+        [SerializeField] private Image endPanel;
         [SerializeField] private Sprite[] chestSprites;
         [SerializeField] private GameObject chestObject;
         [SerializeField] private GridLayoutGroup rewardLayoutParent;
-        [SerializeField] private Item rewardCard;
+        [SerializeField] private InventoryItemUIHelper rewardCard;
 
         private Dictionary<ItemConfig, int> _rewards = new Dictionary<ItemConfig, int>();
         private void OnEnable()
@@ -29,8 +30,9 @@ namespace Controllers
         private void SpawnRewardChest(Dictionary<ItemConfig, int> rewards)
         {
             _rewards = rewards;
-            var chest = Instantiate(chestObject, transform);
+            var chest = Instantiate(chestObject, endPanel.transform);
             chest.GetComponent<Image>().sprite = GetStageChestSprite(CalculateTotalRewardAmount());
+            endPanel.gameObject.SetActive(true);
             StartCoroutine(SpawnRewardCards());
         }
         
@@ -40,8 +42,7 @@ namespace Controllers
             foreach (KeyValuePair<ItemConfig, int> reward in _rewards)
             {
                 var tempCard = Instantiate(rewardCard, rewardLayoutParent.transform);
-                tempCard.ConfigureItem(reward);
-
+                tempCard.ConfigureItemUI(reward.Key.ClassPointSprite, reward.Value, true);
                 yield return new WaitForSeconds(0.3f);
             }
         }

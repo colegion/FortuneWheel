@@ -49,14 +49,14 @@ namespace Controllers
             wheelBase.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 
-        private void AnimationWheel(int finalDestinationAngle, KeyValuePair<ItemConfig, int> outcome)
+        private void PlayWheelAnimation(int finalDestinationAngle, KeyValuePair<ItemConfig, int> outcome)
         {
-            TestSpin();
+            PlaySpin();
             _outcomeItem = outcome;
             _finalAngle = finalDestinationAngle;
         }
         
-        private void TestSpin()
+        private void PlaySpin()
         {
             animationHelper.PlaySpinAnimation();
         }
@@ -96,14 +96,14 @@ namespace Controllers
         private void AddListeners()
         {
             LevelController.OnLevelReady += ConfigureWheelSprites;
-            LevelController.OnAnimationNeeded += AnimationWheel;
+            LevelController.OnAnimationNeeded += PlayWheelAnimation;
             WheelAnimationHelper.OnAnimationCompleted += RotateTowardsTarget;
         }
 
         private void RemoveListeners()
         {
             LevelController.OnLevelReady -= ConfigureWheelSprites;
-            LevelController.OnAnimationNeeded -= AnimationWheel;
+            LevelController.OnAnimationNeeded -= PlayWheelAnimation;
             WheelAnimationHelper.OnAnimationCompleted -= RotateTowardsTarget;
         }
     }

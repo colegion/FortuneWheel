@@ -69,7 +69,7 @@ namespace Controllers
             return _spawnedInventoryItems[itemClass];
         }
 
-        private void DisableExitButton()
+        private void DisableExitButton(int dummyNumber, KeyValuePair<ItemConfig, int> dummyPair)
         {
             exitButton.interactable = false;
         }
@@ -83,6 +83,7 @@ namespace Controllers
 
         private void RaiseCollectEvent()
         {
+            if (PlayerInventory.Count == 0) return;
             OnRewardsCollected?.Invoke(PlayerInventory);
         }
 
@@ -90,12 +91,14 @@ namespace Controllers
         {
             ItemCardUIHelper.OnInventoryUpdateNeeded += TrySpawnInventorySlot;
             LevelController.OnLevelReady += EnableExitButton;
+            LevelController.OnAnimationNeeded += DisableExitButton;
         }
 
         private void RemoveListeners()
         {
             ItemCardUIHelper.OnInventoryUpdateNeeded -= TrySpawnInventorySlot;
             LevelController.OnLevelReady -= EnableExitButton;
+            LevelController.OnAnimationNeeded -= DisableExitButton;
             exitButton.onClick.RemoveListener(RaiseCollectEvent);
         }
         private bool AlreadySpawned(ItemClass itemClass) => _spawnedInventoryItems.ContainsKey(itemClass);

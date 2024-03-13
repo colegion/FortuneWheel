@@ -12,9 +12,9 @@ namespace Helpers
 
       private int _currentAmount;
       public static event Action<RectTransform> OnItemParticleMovementNeeded;
-      public void ConfigureItemUI(Sprite itemSprite, int amount)
+      public void ConfigureItemUI(Sprite itemSprite, int amount, bool gameEnded = false)
       {
-         RaiseTrailEvent();
+         if(!gameEnded) RaiseTrailEvent();
          itemImage.sprite = itemSprite;
          itemAmount.text = $"x{amount}";
          _currentAmount = amount;

@@ -61,7 +61,7 @@ namespace Helpers
 
         private void PositionZoneFrame()
         {
-            zoneLayoutGroup.transform.DOMoveX(zoneLayoutGroup.transform.position.x - 100, .5f);
+            zoneLayoutGroup.transform.DOMoveX(zoneLayoutGroup.transform.position.x - 100 * (Screen.width / 1920f), .5f);
         }
 
         private Color DecideZoneColor(int zoneIndex)

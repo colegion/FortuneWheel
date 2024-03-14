@@ -1,30 +1,73 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Controllers;
 using DG.Tweening;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
-using static Utilities.CommonFields;
+using Utilities;
 
-public class IndicatorRotationHelper : MonoBehaviour
+namespace Helpers
 {
-    [SerializeField] private float rotationDuration;
-    private int _directionFlag;
-    private bool _isRotating;
-
-    private void OnTriggerEnter2D(Collider2D other)
+    public class IndicatorRotationHelper : MonoBehaviour
     {
-        RotateIndicator();
-    }
+        [SerializeField] private float rotationDuration;
+        private int _directionFlag = 1;
+        private Coroutine _rotate;
+        private Tween _rotation;
 
-    private void RotateIndicator()
-    {
-        if (_isRotating) return;
-        _isRotating = true;
-        transform.DORotate(new Vector3(0, 0, _directionFlag * SLICE_ANGLE), rotationDuration).SetEase(Ease.Flash).OnComplete(
-            () =>
+        private void OnEnable()
+        {
+            AddListeners();
+        }
+
+        private void OnDisable()
+        {
+            RemoveListeners();
+        }
+
+        private void RotateIndicator(int dummy, KeyValuePair<ItemConfig, int> dummyPair)
+        {
+            _rotate = StartCoroutine(Rotate());
+        }
+
+        private IEnumerator Rotate()
+        {
+            var targetAngle = _directionFlag == 1 ? 15 : -15;
+            while (true)
             {
-                _isRotating = false;
-                _directionFlag *= -1;
-            });
+                _rotation = transform.DORotateQuaternion(Quaternion.Euler(0, 0, targetAngle), rotationDuration).SetEase(Ease.Linear).OnComplete(() =>
+                {
+                    _directionFlag *= -1;
+                    targetAngle = _directionFlag == 1 ? 15 : -15;
+                });
+
+                yield return new WaitForSeconds(rotationDuration + 0.01f);
+            }
+        }
+
+        private void StopRotating(KeyValuePair<ItemConfig, int> dummyPair)
+        {
+            if (_rotate != null)
+            {
+                StopCoroutine(_rotate);
+                _rotate = null;
+                _rotation?.Kill();
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+
+        private void AddListeners()
+        {
+            LevelController.OnAnimationNeeded += RotateIndicator;
+            WheelUIController.OnRewardDisplayNeeded += StopRotating;
+        }
+
+        private void RemoveListeners()
+        {
+
+            LevelController.OnAnimationNeeded -= RotateIndicator;
+            WheelUIController.OnRewardDisplayNeeded -= StopRotating;
+        }
     }
 }

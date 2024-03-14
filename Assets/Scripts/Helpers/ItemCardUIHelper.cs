@@ -67,10 +67,16 @@ namespace Helpers
         
         private void FakeCardTurn()
         {
-            backSideImage.transform.DORotate(new Vector3(0, 135, 0), 0.7f).SetEase(Ease.InBack).OnComplete(() =>
+            Sequence cardSequence = DOTween.Sequence();
+            cardSequence.Append(backSideImage.transform.DORotate(new Vector3(0, 90, 0), 1f).SetEase(Ease.InBack));
+            cardSequence.InsertCallback(0.5f, () =>
             {
-                backSideImage.gameObject.SetActive(false);
                 cardPanelImage.gameObject.SetActive(true);
+            });
+            cardSequence.Append(cardPanelImage.transform.DOScale(1.15f, 0.2f).SetEase(Ease.Linear));
+            cardSequence.Append(cardPanelImage.transform.DOScale(1f, 0.2f).SetEase(Ease.Linear));
+            cardSequence.AppendCallback(() =>
+            {
                 if (_isGameOver)
                 {
                     OnRestartButtonNeeded?.Invoke();

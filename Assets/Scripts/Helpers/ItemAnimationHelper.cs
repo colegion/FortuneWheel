@@ -54,21 +54,28 @@ namespace Helpers
             if (_spawnedObjects.Count == 0) return;
             DOVirtual.DelayedCall(.1f, ()=>
             {
-                StartCoroutine(MoveParticles(target));
+                MoveParticles(target);
             });
         }
 
-        private IEnumerator MoveParticles(RectTransform target)
+        private void MoveParticles(RectTransform target)
         {
-            foreach (var itemObj in _spawnedObjects)
+            for (int i = 0; i < _spawnedObjects.Count; i++)
             {
-                itemObj.transform.DOMove(target.position, 1.2f).SetEase(Ease.OutCubic).OnComplete(() =>
-                {
-                    Destroy(itemObj.gameObject);
-                });
-
-                yield return new WaitForSeconds(0.2f);
+                AnimateObject(_spawnedObjects[i], target, i);
             }
+        }
+
+        private void AnimateObject(GameObject objectToAnimate, RectTransform target, int delayIndex)
+        {
+            Sequence animSequence = DOTween.Sequence();
+            animSequence.AppendInterval(0.1f * delayIndex);
+            animSequence.Append(objectToAnimate.transform.DORotate(new Vector3(0, 0,0), .7f));
+            animSequence.Join(objectToAnimate.transform.DOJump(target.position, 100, 1, .8f).SetEase(Ease.OutQuad));
+            animSequence.AppendCallback(() =>
+            {
+                Destroy(objectToAnimate.gameObject);
+            });
         }
 
         private void AddListeners()

@@ -14,31 +14,21 @@ public class Item : MonoBehaviour
     private ItemConfig _itemConfig;
     private int _itemAmount;
 
-    public void ConfigureItem(KeyValuePair<ItemConfig, int> item)
+    public void ConfigureItem(KeyValuePair<ItemConfig, int> item, int delay)
     {
         _itemConfig = item.Key;
         _itemAmount = item.Value;
         ResetItemUI();
         itemImage.sprite = GetRandomClassSprite();
-        itemImage.transform.DOScale(1, 1.2f).SetEase(Ease.OutBounce).SetLoops(1, LoopType.Yoyo);
+        transform.DOScale(1, .3f).SetEase(Ease.OutBack).SetDelay(0.1f * delay).SetLoops(1, LoopType.Yoyo);
         if(_itemConfig.ItemClass != CommonFields.ItemClass.Bomb)
             itemAmount.text = $"{_itemAmount}";
     }
 
     private void ResetItemUI()
     {
-        itemImage.transform.localScale = new Vector3(0, 0, 0);
+        transform.localScale = new Vector3(0, 0, 0);
         itemAmount.text = "";
-    }
-
-    public Sprite GetItemClassSprite()
-    {
-        return _itemConfig.ClassPointSprite;
-    }
-
-    public int GetItemAmount()
-    {
-        return _itemAmount;
     }
 
     private Sprite GetRandomClassSprite()

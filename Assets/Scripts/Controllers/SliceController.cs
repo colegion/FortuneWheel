@@ -11,18 +11,16 @@ namespace Controllers
 
         public void InitializeLevelRewards(Dictionary<ItemConfig, int> items)
         {
-            StartCoroutine(ConfigureItems(items));
+            ConfigureItems(items);
         }
 
-        private IEnumerator ConfigureItems(Dictionary<ItemConfig, int> levelItems)
+        private void ConfigureItems(Dictionary<ItemConfig, int> levelItems)
         {
             var count = 0;
             foreach (KeyValuePair<ItemConfig, int> item in levelItems)
             {
-                levelRewards[count].ConfigureItem(item);
+                levelRewards[count].ConfigureItem(item, count);
                 count++;
-            
-                yield return new WaitForSeconds(.2f);
             }
         }
     

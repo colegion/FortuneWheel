@@ -29,7 +29,7 @@ namespace Helpers
 
       private void RaiseTrailEvent()
       {
-         OnItemParticleMovementNeeded?.Invoke(gameObject.GetComponent<RectTransform>());
+         OnItemParticleMovementNeeded?.Invoke(itemImage.rectTransform);
       }
    }
 }

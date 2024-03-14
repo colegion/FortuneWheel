@@ -42,8 +42,8 @@ namespace Controllers
             SetLevelType();
             PopulateLevelItems();
         
-            OnLevelReady?.Invoke(_currentLevelType);
             sliceController.InitializeLevelRewards(_levelRewards);
+            OnLevelReady?.Invoke(_currentLevelType);
             _levelIndex++;
         }
 

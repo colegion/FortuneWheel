@@ -53,6 +53,12 @@ public class InputListener : MonoBehaviour
         spinButton.interactable = true;
     }
 
+    private void DisableSpinButton(Dictionary<ItemConfig, int> dummyDictionary)
+    {
+        spinButton.transition = Selectable.Transition.ColorTint;
+        spinButton.interactable = false;
+    }
+
     private void OnSpinButtonClicked()
     {
         spinButton.transition = Selectable.Transition.None;
@@ -64,12 +70,14 @@ public class InputListener : MonoBehaviour
     {
         LevelController.OnLevelReady += EnableSpinButton;
         ItemCardUIHelper.OnRestartButtonNeeded += EnableRestartButton;
+        Inventory.OnRewardsCollected += DisableSpinButton;
     }
 
     private void RemoveListeners()
     {
         LevelController.OnLevelReady -= EnableSpinButton;
         ItemCardUIHelper.OnRestartButtonNeeded -= EnableRestartButton;
+        Inventory.OnRewardsCollected -= DisableSpinButton;
         spinButton.onClick.RemoveListener(OnSpinButtonClicked);
     }
 }

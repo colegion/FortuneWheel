@@ -24,6 +24,7 @@ namespace Controllers
         private void OnEnable()
         {
             AddListeners();
+            PlayerInventory = new Dictionary<ItemConfig, int>();
         }
 
         private void OnValidate()
